@@ -1,0 +1,15 @@
+{
+	"name": "adf-kklab-20770",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Enabled",
+			"editable": true
+		}
+	},
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "47b4aca4-6b33-4dc1-be2d-6b1b210cba1f",
+		"tenantId": "30fe8ff1-adc6-444d-ba94-1238894df42c"
+	}
+}

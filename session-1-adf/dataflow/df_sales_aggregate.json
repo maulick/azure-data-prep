@@ -1,0 +1,59 @@
+{
+	"name": "df_sales_aggregate",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_raw_sales",
+						"type": "DatasetReference"
+					},
+					"name": "sourceRaw"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_curated_sales",
+						"type": "DatasetReference"
+					},
+					"name": "sinkCurated"
+				}
+			],
+			"transformations": [
+				{
+					"name": "withRevenue"
+				},
+				{
+					"name": "aggregated"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          order_id as short,",
+				"          region as string,",
+				"          product as string,",
+				"          quantity as short,",
+				"          unit_price as double,",
+				"          order_date as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sourceRaw",
+				"sourceRaw derive(revenue = quantity * unit_price) ~> withRevenue",
+				"withRevenue aggregate(groupBy(region),",
+				"     total_revenue = sum(revenue),",
+				"          order_count = count(order_id)) ~> aggregated",
+				"aggregated sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sinkCurated"
+			]
+		}
+	}
+}
